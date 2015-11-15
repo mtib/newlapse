@@ -2,9 +2,7 @@
 import os
 import sys
 
-basedir = "/media/tibyte/Storage/Chronolapse/"
-
-imgFolder = "Work/"
+imgFolder = sys.argv[1]
 mainFolder = "screen_Main/"
 mainWidth = 1920
 mainHeight = 1080
@@ -24,22 +22,22 @@ screens = {
 
 def cut(img):
     for k in screens:
-        os.system("convert " + basedir + imgFolder + img +
-                  " -crop " + screens[k] + " +repage " + basedir + k + img)
+        os.system("convert " + imgFolder + img +
+                  " -crop " + screens[k] + " +repage " + k + img)
 
 
 def prepare():
     print("creating folders")
     for d in screens:
         try:
-            os.mkdir(basedir + d)
+            os.mkdir(d)
         except:
             pass
     print("created folders")
 
 if __name__ == '__main__':
     prepare()
-    imgs = os.listdir(basedir + imgFolder)
+    imgs = os.listdir(imgFolder)
     count = 1.0
     length = len(imgs) * 1.0
     for i in imgs:

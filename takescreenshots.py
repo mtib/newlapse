@@ -2,23 +2,30 @@
 import os
 import sys
 import time
-imgDir = "/media/tibyte/Storage/Chronolapse/Work/"
+import platform
+osname = platform.uname().system
 
-try:
-    os.mkdir(imgDir[:-1])
-except:
-    pass
-
+def takeScreenshot(filename):
+    if osname == "Darwin":
+        os.system("screencapture -x -T 0 -t jpg " + filename)
+        os.system("convert "+filename+" -scale 50% tmp_"+filename)
+        os.remove(filename)
+        os.rename("tmp_"+filename, filename)
+    elif osname == "Linux":
+        os.system("scrot -q 85 " + filename)
+    else:
+        print("Taking screenshots doesn't work under windows")
+        sys.exit()
+    print("New screenshot:",filename)
 
 def main():
+    print("Working in", os.path.abspath(os.curdir))
     interval = float(input("Screenshot interval (in seconds): "))
-    num = 1
+    prefix = input("Screenshot prefix: ")
     while True:
-        imgname = str(int(time.time() * 1000)) + ".png"
-        os.system("scrot -q 85 " + imgDir + imgname)
-        print("Screenshot: " + imgname, "num:", num)
+        imgname = prefix + str(int(time.time() * 1000)) + ".jpg"
+        takeScreenshot(imgname);
         time.sleep(interval)
-        num += 1
 
 if __name__ == '__main__':
     main()
