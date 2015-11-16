@@ -4,12 +4,14 @@ import sys
 import os.path
 # ffmpeg -r 1 -pattern_type glob -i 'test_*.jpg' -c:v libx264 out.mp4
 
+
 def dirtovideo(dirname, framerate=10, glob="*.jpg", videoname=""):
     barecmd = "ffmpeg -y -r {} -pattern_type glob -i '{}' -c:v libx264 {}"
     if len(videoname) > 0:
-        cmd = barecmd.format(framerate, dirname+"/"+glob, videoname+".mp4")
+        cmd = barecmd.format(framerate, dirname + "/" +
+                             glob, videoname + ".mp4")
     else:
-        cmd = barecmd.format(framerate, dirname+"/"+glob, dirname+".mp4")
+        cmd = barecmd.format(framerate, dirname + "/" + glob, dirname + ".mp4")
     os.system(cmd)
 
 if __name__ == '__main__':
