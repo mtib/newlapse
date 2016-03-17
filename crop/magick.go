@@ -33,7 +33,7 @@ type Screen struct {
 type XrandrError string
 
 func (x XrandrError) Error() string {
-	return fmt.Sprintf("xrandr error: %s\n", string(x))
+	return fmt.Sprintf("xrandr error: %s", string(x))
 }
 
 func (s Screen) String() string {
@@ -119,10 +119,12 @@ func ImageForScreens(s Screens, folder string) error {
 }
 
 func relfile(folder, name string) string {
-	if strings.HasSuffix(folder, "/") {
-		return folder + name
+	ds := regexp.MustCompile(`/.?/`)
+	merge := folder + "/" + name
+	for len(ds.FindAllString(merge, -1)) > 0 {
+		merge = ds.ReplaceAllString(merge, "/")
 	}
-	return folder + "/" + name
+	return merge
 }
 
 func cropcall(croparea Screen, oldimage, newimage string) {

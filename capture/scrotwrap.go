@@ -28,14 +28,7 @@ func Folder(dest string, interv int) {
 			break
 		}
 	}
-	if size1 <= 0 {
-		fmt.Println("cannot estimate bytes/second")
-	} else {
-		fmt.Printf("%5.3E byte/sec = %5.3f kb/sec = %5.3f mb/sec\n", size1, size1/1000.0, size1/1000000.0)
-		size1 *= 60
-		fmt.Printf("%5.3E byte/min = %5.3f kb/min = %5.3f mb/min\n", size1, size1/1000.0, size1/1000000.0)
-		fmt.Printf("1GB of storage will be filled in %.2f Minutes\n", 1e9/size1)
-	}
+	estimate(size1)
 	var numpic int64
 	numpic = int64(len(pic1))
 	fmt.Printf("picture #%010d taken\n", numpic)
@@ -68,4 +61,15 @@ func getImageSize(file string) int64 {
 		return 0
 	}
 	return f.Size()
+}
+
+func estimate(ds float64) {
+	if ds <= 0 {
+		fmt.Println("cannot estimate bytes/second")
+	} else {
+		fmt.Printf("%5.3E byte/sec = %5.3f kb/sec = %5.3f mb/sec\n", ds, ds/1000.0, ds/1000000.0)
+		ds *= 60
+		fmt.Printf("%5.3E byte/min = %5.3f kb/min = %5.3f mb/min\n", ds, ds/1000.0, ds/1000000.0)
+		fmt.Printf("1GB of storage will be filled in %.2f Minutes\n", 1e9/ds)
+	}
 }
