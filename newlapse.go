@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/mtib/newlapse/capture"
 	"github.com/mtib/newlapse/convert"
 	"github.com/mtib/newlapse/crop"
-	"os"
 )
 
 var (
@@ -17,6 +18,7 @@ var (
 	captureInterval = flag.Int("rate", 10, "seconds to wait between scrots")
 	folder          = flag.String("folder", "./capture", "which folder to do something with")
 	fps             = flag.Int("fps", 20, "ffmpeg framerate for videos")
+	config          = flag.String("config", "nil", "config to read screensetup from for cropping")
 )
 
 func main() {
@@ -36,7 +38,11 @@ func main() {
 	}
 	if *taskCrop {
 		fmt.Println(`cropping folder:`, *folder)
-		crop.Folder(*folder)
+		if *config != "nil" {
+			crop.ConfigFolder(*folder, crop.ReadConfig(*config))
+		} else {
+			crop.Folder(*folder)
+		}
 	}
 	if *taskConvert {
 		convert.Folder(*fps)

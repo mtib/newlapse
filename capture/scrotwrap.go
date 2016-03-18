@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"runtime"
 	"time"
 )
 
@@ -50,7 +51,15 @@ scrotloop:
 
 func callScrot(dest string, n time.Time) {
 	filename := fmt.Sprintf("%s/%d-%02d-%02d_%02d-%02d-%02d_$wx$h.png", dest, n.Year(), n.Month(), n.Day(), n.Hour(), n.Minute(), n.Second())
-	cmd := exec.Command("scrot", "-q", Quality, "-z", filename)
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "darwin":
+		cmd = exec.Command("screencapture", "-x", filename)
+	case "linux", "freebsd":
+		cmd = exec.Command("scrot", "-q", Quality, "-z", filename)
+	case "windows":
+		fmt.Errorf("%s", "Not able to take a screenshot on windows yet.")
+	}
 	cmd.Run()
 }
 

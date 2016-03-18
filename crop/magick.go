@@ -91,6 +91,39 @@ func Folder(folder string) error {
 	return ImageForScreens(sc, folder)
 }
 
+// ReadConfig reads a text file for screen setup
+func ReadConfig(file string) Screens {
+	fc, err := ioutil.ReadFile(file)
+	if err != nil {
+		panic(err)
+	}
+	return SetConfig(string(fc))
+}
+
+// SetConfig gets Screen config from string
+func SetConfig(config string) Screens {
+	ca := ScreenMatching.FindAllStringSubmatch(config, -1)
+	scr := make(Screens, len(ca))
+	for k, v := range ca {
+		scr[k] = Screen{strtoint(v[1]), strtoint(v[2]), strtoint(v[3]), strtoint(v[4])}
+	}
+	return scr
+}
+
+func strtoint(str string) int {
+	i, e := strconv.ParseInt(str, 10, 32)
+	if e != nil {
+		fmt.Println("something went wrong:", str)
+		return 0
+	}
+	return int(i)
+}
+
+// ConfigFolder crops the pictures in folder as defined in screens
+func ConfigFolder(folder string, screens []Screen) error {
+	return ImageForScreens(screens, folder)
+}
+
 // ImageForScreens crops folder and creates a new folder per screen
 func ImageForScreens(s Screens, folder string) error {
 	files, err := ioutil.ReadDir(folder)

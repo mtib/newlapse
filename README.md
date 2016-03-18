@@ -14,8 +14,9 @@ newlapse -ccc -rate 5 -fps 10 -folder "tmp"
 which will capture a picture of the screen every 5 seconds, and save it in the ./tmp folder.
 if you CTRL+C it will start cropping the pictures and convert each screen into a mp4 file.
 
-### Features
-help text:
+On a mac with retina display you will need to write a config file. First you have to figure out how big the ```screencapture``` pictures are. In my case 2800x1800. Then you ```echo "2800x1800+0+0" > config.txt"```. When cropping you just provide ```newlapse -crop -config "config.txt"```.
+
+### Help Text
 ```
 $ newlapse -help
 Usage of newlapse:
@@ -33,8 +34,10 @@ Usage of newlapse:
     	ffmpeg framerate for videos (default 20)
   -rate int
     	seconds to wait between scrots (default 10)
+  -config string
+    	config to read screensetup from for cropping (default "nil")
 ```
-output:
+### Examples
 ```
 capturing into folder: ./capture
 3.616E+05 byte/sec = 361.619 kb/sec = 0.362 mb/sec
@@ -59,9 +62,22 @@ completed conversion
 ```
 
 
+
 ## Requirements:
-| Programm       | Usage          |
-| :------------- | :------------- |
-| scrot          | screenshot     |
-| imagemagick    | crop           |
-| ffmpeg         | convert        |
+| Programm       | Usage          | Operating System |
+| :------------- | :------------- | :--------------- |
+| scrot          | screenshot     | Linux            |
+| imagemagick    | crop           | Linux, OSX       |
+| ffmpeg         | convert        | Linux, OSX       |
+| screencapture  | screenshot     | OSX              |
+
+```
+# Linux:
+sudo apt-get install scrot ffmpeg imagemagick
+
+# OSX:
+brew update && brew install ffmpeg imagemagick
+
+# Both:
+go get -u github.com/mtib/newlapse
+```
