@@ -50,7 +50,7 @@ scrotloop:
 }
 
 func callScrot(dest string, n time.Time) {
-	filename := fmt.Sprintf("%s/%d-%02d-%02d_%02d-%02d-%02d_$wx$h.png", dest, n.Year(), n.Month(), n.Day(), n.Hour(), n.Minute(), n.Second())
+	filename := fmt.Sprintf("%s/%d-%02d-%02d_%02d-%02d-%02d_$wx$h.jpg", dest, n.Year(), n.Month(), n.Day(), n.Hour(), n.Minute(), n.Second())
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "darwin":

@@ -34,7 +34,7 @@ func Folder(fr int) {
 func ffmpegFolder(folder string, framerate int) *exec.Cmd {
 	//"ffmpeg -y -r {} -pattern_type glob -i '{}' -c:v libx264 {}"
 	// cmd := exec.Command("/bin/sh", "-c", "ffmpeg", "-y", fmt.Sprintf("-r %d", framerate), "-pattern_type glob", fmt.Sprintf("-i '%s/%s'", folder, "*.png"), fmt.Sprintf("'%s_video.mp4'", folder))
-	cmd := exec.Command("ffmpeg", "-y", "-r", fmt.Sprintf("%d", framerate), "-pattern_type", "glob", "-i", fmt.Sprintf("%s/*.png", folder), fmt.Sprintf("video_%c.mp4", []rune(folder)[0]))
+	cmd := exec.Command("ffmpeg", "-y", "-r", fmt.Sprintf("%d", framerate), "-pattern_type", "glob", "-i", fmt.Sprintf("%s/*.jpg", folder), fmt.Sprintf("video_%c.mp4", []rune(folder)[0]))
 	err := cmd.Start()
 	if err != nil {
 		fmt.Println(err)
