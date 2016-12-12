@@ -133,20 +133,28 @@ func ImageForScreens(s Screens, folder string) error {
 	for k := range s {
 		os.Mkdir(fmt.Sprintf("%ds", k+1), os.ModePerm)
 	}
-	var wg sync.WaitGroup
 	fmt.Printf("start cropping (~%d files)\n", len(files))
-	for _, f := range files {
-		if n := f.Name(); strings.HasSuffix(n, ".png") || strings.HasSuffix(n, ".jpg") {
-			wg.Add(len(s))
-			for k, cs := range s {
-				go func(cs Screen, folder string, n string, k int) {
-					cropcall(cs, relfile(folder, n), fmt.Sprintf("%ds/%s", k+1, n))
-					wg.Done()
-				}(cs, folder, n, k)
+	var wgm sync.WaitGroup
+	manage := func(start, end int) {
+		var wg sync.WaitGroup
+		for _, f := range files[start:end] {
+			if n := f.Name(); strings.HasSuffix(n, ".png") || strings.HasSuffix(n, ".jpg") {
+				for k, cs := range s {
+					wg.Add(1)
+					go func() {
+						cropcall(cs, relfile(folder, n), fmt.Sprintf("%ds/%s", k+1, n))
+						wg.Done()
+					}()
+				}
+				wg.Wait()
 			}
-			wg.Wait()
 		}
+		wgm.Done()
 	}
+	wgm.Add(2)
+	go manage(0, len(files)/2)
+	go manage(len(files)/2+1, len(files))
+	wgm.Wait()
 	fmt.Println("completed cropping")
 	return nil
 }
@@ -163,4 +171,5 @@ func relfile(folder, name string) string {
 func cropcall(croparea Screen, oldimage, newimage string) {
 	c := exec.Command("convert", oldimage, "-crop", fmt.Sprintf("%s", croparea), "+repage", newimage)
 	c.Start()
+	c.Wait()
 }
