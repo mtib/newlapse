@@ -141,19 +141,23 @@ func ImageForScreens(s Screens, folder string) error {
 			if n := f.Name(); strings.HasSuffix(n, ".png") || strings.HasSuffix(n, ".jpg") {
 				for k, cs := range s {
 					wg.Add(1)
-					go func() {
+					go func(k int, n, folder string, cs Screen) {
+						go fmt.Println(cs, folder, k, n)
 						cropcall(cs, relfile(folder, n), fmt.Sprintf("%ds/%s", k+1, n))
 						wg.Done()
-					}()
+					}(k, n, folder, cs)
 				}
 				wg.Wait()
 			}
 		}
 		wgm.Done()
 	}
-	wgm.Add(2)
-	go manage(0, len(files)/2)
-	go manage(len(files)/2+1, len(files))
+	cores := 4
+	wgm.Add(cores)
+	l := len(files) / cores
+	for i := 0; i < cores; i++ {
+		go manage(i*l, (i+1)*l+1)
+	}
 	wgm.Wait()
 	fmt.Println("completed cropping")
 	return nil
@@ -170,6 +174,9 @@ func relfile(folder, name string) string {
 
 func cropcall(croparea Screen, oldimage, newimage string) {
 	c := exec.Command("convert", oldimage, "-crop", fmt.Sprintf("%s", croparea), "+repage", newimage)
-	c.Start()
+	ecode := c.Start()
+	if ecode != nil {
+		fmt.Printf("converting %s to %s exited with %s", oldimage, newimage, ecode)
+	}
 	c.Wait()
 }
