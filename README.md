@@ -65,8 +65,8 @@ completed conversion
 
 ## Requirements:
 
-| Programm       | Usage          | Operating System |
-| :------------- | :------------- | :--------------- |
+| Program        | Usage          | Operating System |
+|:---------------|:---------------|:-----------------|
 | scrot          | screenshot     | Linux            |
 | imagemagick    | crop           | Linux, OSX       |
 | ffmpeg         | convert        | Linux, OSX       |
