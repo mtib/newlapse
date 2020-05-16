@@ -1,0 +1,24 @@
+#!/bin/bash
+
+FW="1920"
+FH="1080"
+let HW=$FW/2
+let HH=$FH/2
+
+F="${FW}x${FH}"
+H="${HW}x${HH}"
+
+ffmpeg \
+	-i $1 -i $2 -i $3 -i $4 \
+	-filter_complex "
+		nullsrc=size=${F} [base];
+		[0:v] setpts=PTS-STARTPTS, scale=${H} [upperleft];
+		[1:v] setpts=PTS-STARTPTS, scale=${H} [upperright];
+		[2:v] setpts=PTS-STARTPTS, scale=${H} [lowerleft];
+		[3:v] setpts=PTS-STARTPTS, scale=${H} [lowerright];
+		[base][upperleft] overlay=shortest=1 [tmp1];
+		[tmp1][upperright] overlay=shortest=1:x=${HW} [tmp2];
+		[tmp2][lowerleft] overlay=shortest=1:y=${HH} [tmp3];
+		[tmp3][lowerright] overlay=shortest=1:x=${HW}:y=${HH}
+	" \
+	-vcodec libx265 -crf 30 mosaic.mp4
